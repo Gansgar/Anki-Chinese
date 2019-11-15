@@ -1,0 +1,25 @@
+#character-target-div.done {
+  background: none !important;
+  font-size: 5em;
+}
+
+button#hint-button {
+  background-color: none;
+  padding: 1em 2em;
+  margin: 0.3em;
+  border: 0.1em solid #000;
+  outline: none !important;
+  border-radius: 0.12em;
+  background-color: #fff;
+  color: #000;
+}
+
+button#hint-button:active {
+  background-color: #000;
+  color: #fff;
+}
+
+#character-target-div {
+  background: url("file:///android_asset/hanziwriter/rice.svg");
+  background-size: 100% 100%;
+}
