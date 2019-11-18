@@ -1,13 +1,15 @@
 window.typing_field = document.getElementById("typing-pinyin")
 
 function init_type_question() {
+  console.log(window.answer)
+  console.log(window.pinyin)
   window.answer_bak = window.answer;
   window.pinyin = window.answer = undefined;
   if (document.getElementById("typeans") === null && typing_field !== null) {
     pinyin = typing_field.innerText.trim();
 
     typing_field.hidden = false;
-    typing_field.innerHTML = "<input type='text' id='typeans' onkeypress='_myTypeAnsKey()'>";
+    typing_field.innerHTML = "<input type='text' id='typeans' onchange='_myTypeAnsChange()' onkeypress='_myTypeAnsKey()'>";
   }
 }
 
@@ -56,11 +58,15 @@ function checkDiffPatchMatch() {
   }
 }
 
+function _myTypeAnsChange() {
+  answer = document.getElementById("typeans").value.trim();
+}
+
 function _myTypeAnsKey() {
+  _myTypeAnsChange();
+
   if (window.event.keyCode === 13 && window.study !== undefined && window.study.drawAnswer !== undefined)
     study.drawAnswer()
-    
-  answer = document.getElementById("typeans").value.trim();
 }
 
 init_type_question()
