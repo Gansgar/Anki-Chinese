@@ -1,11 +1,19 @@
-// const syllables = loadSyllables();
+function loadSyllables() {
+  let n = new XMLHttpRequest();
+  n.overrideMimeType("application/json");
+  n.open("GET", "https://raw.githubusercontent.com/pepebecker/pinyin-split/master/syllables.json", 0);
+  n.send();
+  return JSON.parse(n.responseText);
+}
 
-const normalizePinyin = pinyin => {
+window.syllables = typeof window.syllables === "undefined" ? loadSyllables() : window.syllables;
+
+window.normalizePinyin = pinyin => {
   pinyin = pinyin.normalize('NFD').replace(/\u0304|\u0301|\u030c|\u0300/g, '')
   return pinyin.normalize('NFC').replace(/(\w|ü)[1-5]/gi, '$1').toLowerCase()
 }
 
-const split = (text, everything=false, wrapInList=false) => {
+window.split = (text, everything=false, wrapInList=false) => {
   const list = []
   let prevWordFound = false
   let wordEnd = text.length

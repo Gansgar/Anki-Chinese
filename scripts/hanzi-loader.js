@@ -22,12 +22,15 @@ function prepareHanzi(hanzi, target_div, leniency, pinyin_elem, hint_button) {
   if (hanziWriter != null)
     hanziWriter.cancelQuiz();
 
-  while(target_div.firstChild)
-    target_div.removeChild(target_div.firstChild);
-        
+  //while(target_div.firstChild)
+  //  target_div.removeChild(target_div.firstChild);
+  let size = Math.min(target_div.clientWidth, 512, window.innerHeight * 2/3);
+  let style_e = target_div.getElementsByClassName("background-svg")[0].style;
+  style_e.width = style_e.height = size;
+
   var data = {
-    width: target_div.clientWidth,
-    height: target_div.clientWidth,
+    width: size,
+    height: size,
     showCharacter: false,
     showOutline: false,
     highlightOnComplete: true,
@@ -64,7 +67,7 @@ function prepareHanzi(hanzi, target_div, leniency, pinyin_elem, hint_button) {
         } else
           text += ele;
       }
-      pinyin_elem.innerHTML = text;
+      pinyin_elem.innerHTML = text + " (" + hanzi.substr(0, index) + "...)";
     
       /* In case I want the color back
       var elems = pinyin_elem.getElementsByTagName("span");
@@ -81,8 +84,10 @@ function prepareHanzi(hanzi, target_div, leniency, pinyin_elem, hint_button) {
               startQuiz();
           } else {
             hanziWriter.cancelQuiz();
-            target_div.innerHTML = "✓";
-            target_div.classList.add("done");
+            if (hint_button != null)
+              hint_button.hidden = true;
+            if (pinyin_elem != null)
+              pinyin_elem.innerHTML = pinyin_text + " ("+hanzi+ ") ✓";
           }
         }, 1000);
       },
