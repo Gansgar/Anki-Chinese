@@ -1,8 +1,6 @@
 window.typing_field = document.getElementById("typing-pinyin")
 
 function init_type_question() {
-  console.log(window.answer)
-  console.log(window.pinyin)
   window.answer_bak = window.answer;
   window.pinyin = window.answer = undefined;
   if (document.getElementById("typeans") === null && typing_field !== null) {

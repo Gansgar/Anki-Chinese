@@ -34,6 +34,7 @@ function prepareHanzi(hanzi, target_div, leniency, pinyin_elem, hint_button) {
     showCharacter: false,
     showOutline: false,
     highlightOnComplete: true,
+    strokeColor: '#000',
     leniency: leniency,
     padding: 0,
     charDataLoader: loadCharacter
