@@ -1,6 +1,6 @@
 var hanziWriter;
 
-function loadCharacter(char, onComplete) {
+function loadCharacter(char, onComplete, onError) {
   var r = new XMLHttpRequest;
   r.overrideMimeType("application/json");
   r.open("GET", "https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/" + char + ".json", !0);
@@ -12,7 +12,9 @@ function loadCharacter(char, onComplete) {
     if (r.readyState === XMLHttpRequest.DONE) {
       if (r.status === 200)
         onComplete(JSON.parse(r.responseText))
-      else
+      else if (r.status === 404) {
+        onError("Character couldn't be found")
+      } else
         document.body.append("An error occured during download of data (" + r.status + ")");
     }
   }
@@ -28,6 +30,29 @@ function prepareHanzi(hanzi, target_div, leniency, pinyin_elem, hint_button) {
   let style_e = target_div.getElementsByClassName("background-svg")[0].style;
   style_e.width = style_e.height = size;
 
+  var index = 0;
+  var currentStroke;
+
+  // removing all color
+  let pinyin_text = "";
+  if (pinyin_elem != null) {
+    pinyin_elem.innerHTML = pinyin_elem.innerText;
+    pinyin_text = pinyin_elem.innerText;
+  }
+
+  var nextCharacter = function() {  // delay so animation finished
+    if (++index < hanzi.length) {
+      hanziWriter.setCharacter(hanzi[index]);
+      startQuiz();
+    } else {
+      hanziWriter.cancelQuiz();
+      if (hint_button != null)
+        hint_button.hidden = true;
+      if (pinyin_elem != null)
+        pinyin_elem.innerHTML = pinyin_text + " ("+hanzi+ ") ✓";
+    }
+  };
+
   var data = {
     width: size,
     height: size,
@@ -37,20 +62,11 @@ function prepareHanzi(hanzi, target_div, leniency, pinyin_elem, hint_button) {
     strokeColor: '#000',
     leniency: leniency,
     padding: 0,
-    charDataLoader: loadCharacter
+    charDataLoader: loadCharacter,
+    onLoadCharDataError: nextCharacter
   };
 
   hanziWriter = HanziWriter.create(target_div.id, hanzi[0], data);
-
-  // removing all color
-  let pinyin_text = "";
-  if (pinyin_elem != null) {
-    pinyin_elem.innerHTML = pinyin_elem.innerText;
-    pinyin_text = pinyin_elem.innerText;
-  }
-
-  var index = 0;
-  var currentStroke;
 
   function startQuiz() {
     currentStroke = -1;
@@ -64,9 +80,9 @@ function prepareHanzi(hanzi, target_div, leniency, pinyin_elem, hint_button) {
             text += "<u>" + ele[0] + "</u>";
           else
             text += ele[0];
-          i++;
         } else
           text += ele;
+        i++;
       }
       pinyin_elem.innerHTML = text + " (" + hanzi.substr(0, index) + "...)";
     
@@ -78,19 +94,7 @@ function prepareHanzi(hanzi, target_div, leniency, pinyin_elem, hint_button) {
     }
     hanziWriter.quiz({
       onComplete: function(summaryData) {
-        setTimeout(function() {  // delay so animation finished
-          if (++index < hanzi.length) {
-              
-              hanziWriter.setCharacter(hanzi[index]);
-              startQuiz();
-          } else {
-            hanziWriter.cancelQuiz();
-            if (hint_button != null)
-              hint_button.hidden = true;
-            if (pinyin_elem != null)
-              pinyin_elem.innerHTML = pinyin_text + " ("+hanzi+ ") ✓";
-          }
-        }, 1000);
+        setTimeout(nextCharacter, 1000);
       },
       onCorrectStroke: function(strokeData) {
         currentStroke = strokeData.strokeNum; 
