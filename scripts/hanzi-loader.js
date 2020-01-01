@@ -1,6 +1,11 @@
 var hanziWriter;
 
 function loadCharacter(char, onComplete, onError) {
+  if (" ()-/".includes(char)) {
+    onError("Invalid char")
+    return
+  }
+  
   var r = new XMLHttpRequest;
   r.overrideMimeType("application/json");
   r.open("GET", "https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/" + char + ".json", !0);
@@ -74,15 +79,18 @@ function prepareHanzi(hanzi, target_div, leniency, pinyin_elem, hint_button) {
       var split = pinyin_split(pinyin_text, true, true);
       var text = "";
       let i = 0;
+      console.log(split)
       for(let ele of split) {
         if (Array.isArray(ele)) {
           if (i == index)
             text += "<u>" + ele[0] + "</u>";
           else
             text += ele[0];
-        } else
+          i++;
+        } else {
           text += ele;
-        i++;
+          i += ele.length
+        }
       }
       pinyin_elem.innerHTML = text + " (" + hanzi.substr(0, index) + "...)";
     
