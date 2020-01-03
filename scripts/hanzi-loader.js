@@ -79,7 +79,6 @@ function prepareHanzi(hanzi, target_div, leniency, pinyin_elem, hint_button) {
       var split = pinyin_split(pinyin_text, true, true);
       var text = "";
       let i = 0;
-      console.log(split)
       for(let ele of split) {
         if (Array.isArray(ele)) {
           if (i == index)
