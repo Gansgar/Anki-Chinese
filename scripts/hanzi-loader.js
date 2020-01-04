@@ -79,19 +79,20 @@ function prepareHanzi(hanzi, target_div, leniency, pinyin_elem, hint_button) {
       var split = pinyin_split(pinyin_text, true, true);
       var text = "";
       let i = 0;
+      var hanz = hanzi.substr(0, index)
       for(let ele of split) {
         if (Array.isArray(ele)) {
-          if (i == index)
+          if (i == hanz.replace(/\s/g, '').length) {
             text += "<u>" + ele[0] + "</u>";
-          else
-            text += ele[0];
-          i++;
+          } else
+            text += ele.toString()
+          i++
         } else {
-          text += ele;
-          i += ele.length
+          text += ele
+          i += ele.replace(/\s/g, '').length
         }
       }
-      pinyin_elem.innerHTML = text + " (" + hanzi.substr(0, index) + "...)";
+      pinyin_elem.innerHTML = text + " (" + hanz + "…)";
     
       /* In case I want the color back
       var elems = pinyin_elem.getElementsByTagName("span");
